@@ -2,7 +2,7 @@
   This is a library for the MPR121 I2C 12-chan Capacitive Sensor
 
   Designed specifically to work with the MPR121 sensor from Adafruit
-  ----> https://www.adafruit.com/products/
+  ----> https://www.adafruit.com/products/1982
 
   These sensors use I2C to communicate, 2+ pins are required to  
   interface
