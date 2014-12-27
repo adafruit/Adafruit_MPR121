@@ -27,6 +27,8 @@ uint16_t lasttouched = 0;
 uint16_t currtouched = 0;
 
 void setup() {
+  while (!Serial);        // needed to keep leonardo/micro from starting too fast!
+
   Serial.begin(9600);
   Serial.println("Adafruit MPR121 Capacitive Touch sensor test"); 
   

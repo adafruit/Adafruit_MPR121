@@ -90,7 +90,6 @@ uint16_t  Adafruit_MPR121::baselineData(uint8_t t) {
 
 uint16_t  Adafruit_MPR121::touched(void) {
   uint16_t t = readRegister16(MPR121_TOUCHSTATUS_L);
-
   return t & 0x0FFF;
 }
 
@@ -101,7 +100,7 @@ uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
     Wire.beginTransmission(_i2caddr);
     Wire.write(reg);
     Wire.endTransmission(false);
-    Wire.requestFrom(_i2caddr, 1);
+    while (Wire.requestFrom(_i2caddr, 1) != 1);
     return ( Wire.read());
 }
 
@@ -109,7 +108,7 @@ uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
     Wire.beginTransmission(_i2caddr);
     Wire.write(reg);
     Wire.endTransmission(false);
-    Wire.requestFrom(_i2caddr, 2);
+    while (Wire.requestFrom(_i2caddr, 2) != 2);
     uint16_t v = Wire.read();
     v |=  ((uint16_t) Wire.read()) << 8;
     return v;
