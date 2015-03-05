@@ -71,6 +71,11 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
 }
 
 void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
+
+  setThresholds(touch, release);
+  }
+
+void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
   for (uint8_t i=0; i<12; i++) {
     writeRegister(MPR121_TOUCHTH_0 + 2*i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2*i, release);
