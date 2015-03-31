@@ -83,7 +83,9 @@ class Adafruit_MPR121 {
   uint16_t readRegister16(uint8_t reg);
   void writeRegister(uint8_t reg, uint8_t value);
   uint16_t touched(void);
-  void setThreshholds(uint8_t touch, uint8_t release);
+  // Add deprecated attribute so that the compiler shows a warning
+  __attribute__((deprecated)) void setThreshholds(uint8_t touch, uint8_t release);
+  void setThresholds(uint8_t touch, uint8_t release);
 
  private:
   int8_t _i2caddr;
