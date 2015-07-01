@@ -107,7 +107,9 @@ uint16_t  Adafruit_MPR121::touched(void) {
 
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
 #if defined(__SAM3X8E__)
+#ifndef WIRE_CUSTOM
 #pragma message ( "You need to use the Wire library in extras for this to compile." )
+#endif
 	while (Wire.requestFrom(_i2caddr, 1, reg, 1, true) != 1);
 #else
     Wire.beginTransmission(_i2caddr);
