@@ -24,6 +24,10 @@
 #endif
 #include <Wire.h>
 
+#if !defined(_BV)
+#define _BV(x) (1<<(x))
+#endif
+
 // The default I2C address
 #define MPR121_I2CADDR_DEFAULT 0x5A
 
