@@ -24,6 +24,18 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
     
   _i2caddr = i2caddr;
 
+  return initMPR121();
+}
+
+boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin) {
+  Wire.begin(sdaPin, sclPin);
+    
+  _i2caddr = i2caddr;
+
+  return initMPR121();
+}
+
+boolean Adafruit_MPR121::initMPR121(){
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
   delay(1);
@@ -66,7 +78,6 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
 //  writeRegister(MPR121_LOWLIMIT, 50);
   // enable all electrodes
   writeRegister(MPR121_ECR, 0x8F);  // start with first 5 bits of baseline tracking
-
   return true;
 }
 

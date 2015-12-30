@@ -75,6 +75,7 @@ class Adafruit_MPR121 {
   Adafruit_MPR121(void);
 
   boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
+  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT, uint8_t sdaPin = SDA, uint8_t sclPin = SCL);
 
   uint16_t filteredData(uint8_t t);
   uint16_t  baselineData(uint8_t t);
@@ -89,6 +90,7 @@ class Adafruit_MPR121 {
 
  private:
   int8_t _i2caddr;
+  boolean initMPR121();
 };
 
 #endif // ADAFRUIT_MPR121_H
