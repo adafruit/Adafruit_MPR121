@@ -36,6 +36,9 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin) 
 }
 
 boolean Adafruit_MPR121::initMPR121(){
+  //set default; automatically enabled when irq pin is set
+  _useIRQ = false;
+  
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
   delay(1);
@@ -52,7 +55,7 @@ boolean Adafruit_MPR121::initMPR121(){
   if (c != 0x24) return false;
 
 
-  setThreshholds(12, 6);
+  setThresholds(12, 6);
   writeRegister(MPR121_MHDR, 0x01);
   writeRegister(MPR121_NHDR, 0x01);
   writeRegister(MPR121_NCLR, 0x0E);
@@ -82,7 +85,6 @@ boolean Adafruit_MPR121::initMPR121(){
 }
 
 void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
-
   setThresholds(touch, release);
   }
 
@@ -91,6 +93,16 @@ void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
     writeRegister(MPR121_TOUCHTH_0 + 2*i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2*i, release);
   }
+}
+
+void Adafruit_MPR121::registerIRQ(uint8_t irqPin){
+  _irqPin = irqPin;
+  _useIRQ = true;
+  attachInterrupt(_irqPin,fireIRQ,RISING);
+}
+
+void Adafruit_MPR121::fireIRQ(){
+  _interrupted = true;
 }
 
 uint16_t  Adafruit_MPR121::filteredData(uint8_t t) {
@@ -105,8 +117,18 @@ uint16_t  Adafruit_MPR121::baselineData(uint8_t t) {
 }
 
 uint16_t  Adafruit_MPR121::touched(void) {
-  uint16_t t = readRegister16(MPR121_TOUCHSTATUS_L);
-  return t & 0x0FFF;
+  uint16_t result = 0;
+  //if interrupt / IRQ is used then return IRQ status
+  if(_useIRQ){
+    result = _interrupted ? 1 : 0;
+  }else{ 
+    //else read status from MPR121 registers
+    result = readRegister16(MPR121_TOUCHSTATUS_L) & 0x0FFF;
+  }
+  
+  //reset IRQ status for next loop
+  _interrupted = false;
+  return result;
 }
 
 /*********************************************************************/

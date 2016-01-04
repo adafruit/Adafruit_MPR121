@@ -71,26 +71,32 @@
 //.. thru to 0x1C/0x1D
 class Adafruit_MPR121 {
  public:
-  // Hardware I2C
-  Adafruit_MPR121(void);
-
-  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
-  boolean begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin);
-
-  uint16_t filteredData(uint8_t t);
-  uint16_t  baselineData(uint8_t t);
-
-  uint8_t readRegister8(uint8_t reg);
-  uint16_t readRegister16(uint8_t reg);
-  void writeRegister(uint8_t reg, uint8_t value);
-  uint16_t touched(void);
-  // Add deprecated attribute so that the compiler shows a warning
-  __attribute__((deprecated)) void setThreshholds(uint8_t touch, uint8_t release);
-  void setThresholds(uint8_t touch, uint8_t release);
-
+    // Hardware I2C
+    Adafruit_MPR121(void);
+  
+    boolean   begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
+    boolean   begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin);
+  
+    uint16_t  filteredData(uint8_t t);
+    uint16_t  baselineData(uint8_t t);
+  
+    uint8_t   readRegister8(uint8_t reg);
+    uint16_t  readRegister16(uint8_t reg);
+    void      writeRegister(uint8_t reg, uint8_t value);
+    uint16_t  touched(void);
+    // Add deprecated attribute so that the compiler shows a warning
+    __attribute__((deprecated)) void setThreshholds(uint8_t touch, uint8_t release);
+    void      setThresholds(uint8_t touch, uint8_t release);
+    void      registerIRQ(uint8_t irqPin);
+  
  private:
-  int8_t _i2caddr;
-  boolean initMPR121(void);
+    int8_t    _i2caddr;
+    boolean   _useIRQ;
+    int8_t    _irqPin;
+    boolean   _interrupted;
+    
+    void      fireIRQ(void);
+    boolean   initMPR121(void);
 };
 
 #endif // ADAFRUIT_MPR121_H
