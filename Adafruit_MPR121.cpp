@@ -81,10 +81,61 @@ boolean Adafruit_MPR121::initMPR121(){
   return true;
 }
 
-void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
-
-  setThresholds(touch, release);
+/*
+* This method is used to set the global debounce timeout for all channels.
+* Debounce is used to avoid double processing of a single touch.
+*
+* Setting the global debounce will ovveride debounce timeout set for a specific channel. 
+*/
+void Adafruit_MPR121::setDebounce(uint16_t debounce) {
+  for (int i = 0; i < 11; i++) {
+    setDebounce(debounce, i);
   }
+}
+
+/*
+* This method is used to set the debounce timeout for a specific channel.
+* Debounce is used to avoid double processing of a single touch.
+*/
+void Adafruit_MPR121::setDebounce(uint16_t debounce, uint8_t channel) {
+  _channels[channel]._debounce = debounce;
+}
+
+/*
+* This method is used to set a channel to a specific type;
+* used as touch sensor or LED controller.
+* Returns true on success
+*/
+boolean Adafruit_MPR121::setChannelType(uint8_t channel, uint8_t type) {
+  //first 4 (0-3) channels can not be set to LED mode
+  if(type == MPR121_LED && channel <= 3){
+    return false;
+  }
+  _channels[channel]._type = type;
+  
+  //set GPIO enabled (remember: sensor register have higher priority!)
+  writeRegister(MPR121_GPIOEN, 0xFF);
+  writeRegister(MPR121_GPIODIR, 0xFF);      // 0x76 is GPIO Dir
+  
+  //apply config for each channel
+  for (uint8_t i = 0; i < 11; i++) {
+    Channel channel = _channels[i];
+    if(channel._type == MPR121_SENSOR){
+      //disable LED
+      //set as sensor
+    } else {
+      //enable LED
+      //disable sensor
+    
+    }
+  }
+  writeRegister(MPR121_GPIOCLR, 0xFF);    // GPIO Data Clear
+}
+
+
+void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
+  setThresholds(touch, release);
+}
 
 void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
   for (uint8_t i=0; i<12; i++) {
@@ -102,6 +153,29 @@ uint16_t  Adafruit_MPR121::baselineData(uint8_t t) {
   if (t > 12) return 0;
   uint16_t bl = readRegister8(MPR121_BASELINE_0 + t);
   return (bl << 2);
+}
+
+/*
+* Checks the touch status for a single channel including debounce
+*/
+boolean Adafruit_MPR121::touched(uint8_t channel){
+  //if channel is used as LED it is never touched
+  if(_channels[channel]._type == MPR121_LED) {
+    return false;
+  }
+  
+  // check debounce
+  if((_channels[channel]._lastTouch + _channels[channel]._debounce) < millis()) {
+    return false;
+  }
+  
+  // check touched
+  if(touched() & _BV(channel)){
+    //reset debounce
+    _channels[channel]._lastTouch = millis();
+    return true;
+  }
+  return false;
 }
 
 uint16_t  Adafruit_MPR121::touched(void) {

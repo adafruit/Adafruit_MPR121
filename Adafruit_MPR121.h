@@ -68,6 +68,9 @@
 
 #define MPR121_SOFTRESET 0x80
 
+#define MPR121_SENSOR 0
+#define MPR121_LED 1
+
 //.. thru to 0x1C/0x1D
 class Adafruit_MPR121 {
  public:
@@ -77,20 +80,30 @@ class Adafruit_MPR121 {
   boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
   boolean begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin);
 
-  uint16_t filteredData(uint8_t t);
+  uint16_t  filteredData(uint8_t t);
   uint16_t  baselineData(uint8_t t);
 
-  uint8_t readRegister8(uint8_t reg);
-  uint16_t readRegister16(uint8_t reg);
-  void writeRegister(uint8_t reg, uint8_t value);
-  uint16_t touched(void);
+  uint8_t   readRegister8(uint8_t reg);
+  uint16_t  readRegister16(uint8_t reg);
+  void      writeRegister(uint8_t reg, uint8_t value);
+  uint16_t  touched(void);
+  boolean   touched(uint8_t channel);
   // Add deprecated attribute so that the compiler shows a warning
   __attribute__((deprecated)) void setThreshholds(uint8_t touch, uint8_t release);
-  void setThresholds(uint8_t touch, uint8_t release);
+  void    setThresholds(uint8_t touch, uint8_t release);
+  void    setDebounce(uint16_t debounce);
+  void    setDebounce(uint16_t debounce, uint8_t channel);
+  boolean    setChannelType(uint8_t channel, uint8_t type);
 
  private:
+  struct Channel {
+    uint16_t _debounce = 0;
+    long _lastTouch = 0;
+    uint8_t _type = MPR121_SENSOR;
+  };
   int8_t _i2caddr;
   boolean initMPR121(void);
+  Channel _channels[12];;
 };
 
 #endif // ADAFRUIT_MPR121_H
