@@ -94,7 +94,8 @@ class Adafruit_MPR121 {
   void    setDebounce(uint16_t debounce);
   void    setDebounce(uint16_t debounce, uint8_t channel);
   boolean    setChannelType(uint8_t channel, uint8_t type);
-  void      registerIRQ(uint8_t irqPin);
+  void      useIRQ();
+  void      fireIRQ();
 
 
  private:
@@ -103,15 +104,13 @@ class Adafruit_MPR121 {
     long _lastTouch = 0;
     uint8_t _type = MPR121_SENSOR;
   };
-  int8_t _i2caddr;
-  boolean initMPR121(void);
-  Channel _channels[12];
+
+    Channel _channels[12];
     int8_t    _i2caddr;
     boolean   _useIRQ;
     int8_t    _irqPin;
     boolean   _interrupted;
     
-    void      fireIRQ(void);
     boolean   initMPR121(void);
 };
 

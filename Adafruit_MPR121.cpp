@@ -147,10 +147,8 @@ void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
   }
 }
 
-void Adafruit_MPR121::registerIRQ(uint8_t irqPin){
-  _irqPin = irqPin;
+void Adafruit_MPR121::useIRQ(){
   _useIRQ = true;
-  attachInterrupt(_irqPin,fireIRQ,RISING);
 }
 
 void Adafruit_MPR121::fireIRQ(){
