@@ -241,7 +241,6 @@ boolean Adafruit_MPR121::getGPIOStatus(uint8_t channelID){
 */
 void Adafruit_MPR121::setGPIOEnabled(uint8_t channelID, boolean enable){
   if(_channels[channelID]._type == MPR121_SENSOR){
-    Serial.println("return -> SENSOR");
     return;
   }
   
@@ -332,10 +331,7 @@ uint16_t  Adafruit_MPR121::touched(void) {
   //if interrupt is used then return IRQ status
   if(_useIRQ){
     result = _interrupted ? 1 : 0;
-  }else{ 
-    //check global debounce
-    //TODO
-    
+  }else{     
     //else read status from MPR121 registers
     result = readRegister16(MPR121_TOUCHSTATUS_L) & 0x0FFF;
   }
