@@ -27,6 +27,7 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
   return initMPR121();
 }
 
+#if defined(ESP8266)
 boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin) {
   Wire.begin(sdaPin, sclPin);
     
@@ -34,11 +35,9 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin) 
 
   return initMPR121();
 }
+#endif
 
 boolean Adafruit_MPR121::initMPR121(){
-  //set default; automatically enabled when irq pin is set
-  _useIRQ = false;
-  
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
   delay(1);
@@ -53,7 +52,6 @@ boolean Adafruit_MPR121::initMPR121(){
   uint8_t c = readRegister8(MPR121_CONFIG2);
   
   if (c != 0x24) return false;
-
 
   setThresholds(12, 6);
   writeRegister(MPR121_MHDR, 0x01);
@@ -108,119 +106,58 @@ boolean Adafruit_MPR121::setChannelType(uint8_t channelID, uint8_t type) {
     //unknown type
     return false;
   }
+  //apply config for the channel  
   _channels[channelID]._type = type;
+   
+  unsigned char bitmask =  1<<(channelID-4);
   
+  //go to stop mode to be able to write configuration registers
+  writeRegister(MPR121_ECR, 0x00);  // start with first 5 bits of baseline tracking
   
+  //set channel enabled
+  uint8_t stuEnabled = readRegister8(MPR121_GPIOEN); 
+  writeRegister(MPR121_GPIOEN, stuEnabled | bitmask);
   
-  //set GPIO enabled (remember: sensor register have higher priority!)
-  writeRegister(MPR121_GPIOEN, 0xFF);
-  writeRegister(MPR121_GPIODIR, 0xFF);      // 0x76 is GPIO Dir
-  
-  //apply config for the channel
-  Channel channel = _channels[channelID];
-    
-  //get current status of GPIO enabled register
-  uint8_t gpioEnabled = readRegister8(MPR121_GPIOEN);
-    
-  if(channel._type == MPR121_SENSOR){
-      
-    //disable GPIO
-    gpioEnabled ^= (-0 ^ gpioEnabled) & (1 << (channelID-4));
-    writeRegister(MPR121_GPIOEN,gpioEnabled);
-  } else {      
-    //enable GPIO
-    gpioEnabled ^= (-1 ^ gpioEnabled) & (1 << (channelID-4));
-    writeRegister(MPR121_GPIOEN,gpioEnabled);
-      
-    //set direction
-    uint8_t direction = readRegister8(MPR121_GPIODIR);
-    if(channel._type == MPR121_GPIO_OUT){
-      direction ^= (-1 ^ direction) & (1 << (channelID-4));
-    }else if(channel._type == MPR121_GPIO_IN){
-      direction ^= (-0 ^ direction) & (1 << (channelID-4));
-    }
-    writeRegister(MPR121_GPIODIR,direction);
+  //set direction
+  uint8_t stuDirection = readRegister8(MPR121_GPIODIR);
+  if(type == MPR121_GPIO_IN){
+      writeRegister(MPR121_GPIODIR, stuDirection & ~bitmask);
+  }else{
+      writeRegister(MPR121_GPIODIR,stuDirection | bitmask);
   }
   
-  //enable / disable electrodes in ECR register @ 0x5E
-  int maxElectrodeID = 0;
-  for (uint8_t i=0; i<12; i++) {
-    if (_channels[i]._type == MPR121_SENSOR){
-      maxElectrodeID = i;
-    }else if( (i-1) > maxElectrodeID){
-      //ok, something is wrong -> all electrodes must be at the lower channels
-      //mixing is not possible! Seet datasheet for ECR register description
-      //lower GPIO pins will not work!
-    }
+  //Set control0 register
+  uint8_t stuCtrl0 = readRegister8(MPR121_GPIOCTL0);
+  writeRegister(MPR121_GPIOCTL0, stuCtrl0 & ~bitmask);
+  
+  //Set control1 register
+  uint8_t stuCtrl1 = readRegister8(MPR121_GPIOCTL1);
+  writeRegister(MPR121_GPIOCTL1, stuCtrl1 & ~bitmask);
+ 
+  //enable electrodes again -> run mode
+  //fill this register with the highest sensor id +1
+  for (uint8_t i=11; i>0; i--){
+      if(_channels[i]._type == MPR121_SENSOR){
+        writeRegister(MPR121_ECR, i+1);
+        break;
+      }  
   }
-  
-  //see datasheet: enables electrodes 0 - channelID for touch
-  writeRegister(MPR121_ECR,maxElectrodeID);
-  
-  writeRegister(MPR121_GPIOCLR, 0xFF);    // GPIO Data Clear
 }
 
 /*
-* This method can be used to enable internal pullup resistor on a specific channel.
-* The channel must be set as GPIO_IN.
-* returns true on success, false otherwise
+* Returns the configured type of the channel
 */
-boolean Adafruit_MPR121::enablePullUp(uint8_t channelID){
-  if(_channels[channelID]._type != MPR121_GPIO_IN){
-    return false;
-  }
-  //get control register
-  uint8_t ctrl0 = readRegister8(MPR121_GPIOCTL0);
-  uint8_t ctrl1 = readRegister8(MPR121_GPIOCTL1);
-  
-  //pull enabled: ctrl0 = 1; ctrl1 = 1
-  ctrl0 ^= (-1 ^ ctrl0) & (1 << (channelID-4));
-  ctrl1 ^= (-1 ^ ctrl1) & (1 << (channelID-4));
-  
-  //write back to chip
-  writeRegister(MPR121_GPIOCTL0, ctrl0);
-  writeRegister(MPR121_GPIOCTL1, ctrl1);
-  
-  //TODO clear all?
-  //writeRegister(MPR121_GPIOCLR, 0xFF);
-  
-  return true;
+uint8_t Adafruit_MPR121::getChannelType(uint8_t channelID) {
+    return _channels[channelID]._type;
 }
-
-/*
-* This method can be used to enable internal pulldown resistor on a specific channel.
-* The channel must be set as GPIO_IN.
-* returns true on success, false otherwise
-*/
-boolean Adafruit_MPR121::enablePullDown(uint8_t channelID){
-  if(_channels[channelID]._type != MPR121_GPIO_IN){
-    return false;
-  }
-  //get control register
-  uint8_t ctrl0 = readRegister8(MPR121_GPIOCTL0);
-  uint8_t ctrl1 = readRegister8(MPR121_GPIOCTL1);
-  
-  //pull enabled: ctrl0 = 1; ctrl1 = 0
-  ctrl0 ^= (-1 ^ ctrl0) & (1 << (channelID-4));
-  ctrl1 &= ~(1 << (channelID-4));
-  
-  //write back to chip
-  writeRegister(MPR121_GPIOCTL0, ctrl0);
-  writeRegister(MPR121_GPIOCTL1, ctrl1);
-  
-  //TODO clear all?
-  //writeRegister(MPR121_GPIOCLR, 0xFF);
-  
-  return true;  
-} 
 
 /*
 * returns the GPIO status of the specific channel;
 * channel 0 -  3 always return false -> sensor only
 * channel 4 - 11:
     MPR121_SENSOR   -> return false
-*   MPR121_GPIO_IN  -> read from chip and returns status
-*   MPR121_GPIO_OUT -> get status from channel if LED if enabled
+*   MPR121_GPIO_IN  -> read from chip, save to channel config and return status
+*   MPR121_GPIO_OUT -> get status from channel config: channel._gpioHigh.
 */
 boolean Adafruit_MPR121::getGPIOStatus(uint8_t channelID){
     if(channelID <= 3 || _channels[channelID]._type == MPR121_SENSOR){
@@ -240,18 +177,18 @@ boolean Adafruit_MPR121::getGPIOStatus(uint8_t channelID){
 * If the channel is configured as MPR121_SENSOR this method is ignored.
 */
 void Adafruit_MPR121::setGPIOEnabled(uint8_t channelID, boolean enable){
-  if(_channels[channelID]._type == MPR121_SENSOR){
+  if(_channels[channelID]._type != MPR121_GPIO_OUT){
     return;
   }
   
   uint8_t status = readRegister8(MPR121_GPIOSET);
   if(enable){   
-    status ^= (-1 ^ status) & (1 << (channelID-4));
-    writeRegister(MPR121_GPIOSET,status);  
+    writeRegister(MPR121_GPIOSET,1 << (channelID-4));
   }else{
-    status ^= (-1 ^ status) & (1 << (channelID-4)); //set n.th bit to 0
-    writeRegister(MPR121_GPIOCLR,status);
+    writeRegister(MPR121_GPIOCLR,1 << (channelID-4));
   }
+  //save status to channel configuration for later use
+  _channels[channelID]._gpioHigh = enable;
 }
 
 
@@ -264,14 +201,6 @@ void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
     writeRegister(MPR121_TOUCHTH_0 + 2*i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2*i, release);
   }
-}
-
-void Adafruit_MPR121::useIRQ(boolean value){
-  _useIRQ = value;
-}
-
-void Adafruit_MPR121::fireIRQ(){
-  _interrupted = true;
 }
 
 uint16_t  Adafruit_MPR121::filteredData(uint8_t t) {
@@ -289,55 +218,30 @@ uint16_t  Adafruit_MPR121::baselineData(uint8_t t) {
 * Checks the touch status for a single channel including debounce
 */
 boolean Adafruit_MPR121::touched(uint8_t channel){
-  //if channel is used as MPR121_GPIO_OUT it is never touched
-  if(_channels[channel]._type == MPR121_GPIO_OUT) {
-    //Serial.println("MPR121: channel-type=GPIO_OUT -> touched false");
-    return false;
-  }
-  
-  //if IRQ is used -> check irq status first
-  if(_useIRQ && !_interrupted){
-    //Serial.println("MPR121: irq=true , !interrupted");
+  //if channel is no used as MPR121_SENSOR it is never touched
+  if(_channels[channel]._type != MPR121_SENSOR) {
     return false;
   }
   
   // check debounce
-  if((_channels[channel]._lastTouch + _debounce) > millis()) {
-    return false;
-  }
-  
-  // check touched
-  uint16_t touched = this->touched();
-  for (uint8_t i=0; i<12; i++){
-    if (touched & _BV(channel)){
-      //reset debounce
-      _channels[channel]._lastTouch = millis();
-      
-      //set touch state
-      _channels[channel]._touched = true;
-      
-      //reset interrupt
-      _interrupted = false;
-    }else{
-      //not touched//set touch state
-      _channels[channel]._touched = false;
-    }
+  if((_lastTouch + _debounce) <= millis()) { 
+     // check touched
+     uint16_t touched = this->touched();
+     for (uint8_t i=0; i<12; i++){
+        //set touch state
+        _channels[i]._touched = touched & _BV(i);
+  	 }
   }
   return _channels[channel]._touched;
 }
 
 uint16_t  Adafruit_MPR121::touched(void) {
   uint16_t result = 0;
-  //if interrupt is used then return IRQ status
-  if(_useIRQ){
-    result = _interrupted ? 1 : 0;
-  }else{     
-    //else read status from MPR121 registers
-    result = readRegister16(MPR121_TOUCHSTATUS_L) & 0x0FFF;
-  }
-  
-  //reset IRQ status for next loop
-  _interrupted = false;
+
+  //reset debounce
+  _lastTouch = millis();
+  //else read status from MPR121 registers
+  result = readRegister16(MPR121_TOUCHSTATUS_L) & 0x0FFF; 
   return result;
 }
 
@@ -347,7 +251,7 @@ uint16_t  Adafruit_MPR121::touched(void) {
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
     Wire.beginTransmission(_i2caddr);
     Wire.write(reg);
-    Wire.endTransmission(false);
+    Wire.endTransmission(false);    
     while (Wire.requestFrom(_i2caddr, 1) != 1);
     return ( Wire.read());
 }

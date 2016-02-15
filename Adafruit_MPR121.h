@@ -67,9 +67,6 @@
 #define MPR121_GPIOCTL1     0x74
 #define MPR121_GPIODATA     0x75
 
-
-
-
 #define MPR121_SOFTRESET 0x80
 
 #define MPR121_SENSOR 0
@@ -83,7 +80,9 @@ class Adafruit_MPR121 {
   Adafruit_MPR121(void);
 
   boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
+  #if defined(ESP8266)
   boolean begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin);
+  #endif
 
   uint16_t  filteredData(uint8_t t);
   uint16_t  baselineData(uint8_t t);
@@ -102,19 +101,13 @@ class Adafruit_MPR121 {
   
   //LED controller functions
   boolean    setChannelType(uint8_t channel, uint8_t type);
+  uint8_t    getChannelType(uint8_t channel);
   boolean    getGPIOStatus(uint8_t channel);
   void       setGPIOEnabled(uint8_t channel, boolean status);
-  boolean    enablePullUp(uint8_t channel);
-  boolean    enablePullDown(uint8_t channel); 
-  
-  //IRQ / Interrupt functions
-  void      useIRQ(boolean value);
-  void      fireIRQ();
 
 
  private:
   struct Channel {
-    long      _lastTouch = 0;
     uint8_t   _type = MPR121_SENSOR;
     boolean   _gpioHigh = false;
     boolean   _touched = false;
@@ -123,10 +116,7 @@ class Adafruit_MPR121 {
     Channel _channels[12];
     int8_t    _i2caddr;
     uint16_t  _debounce = 0;
-    
-    //irq / interrupt variables
-    boolean   _useIRQ;
-    boolean   _interrupted;
+    long      _lastTouch = 0;
     
     boolean   initMPR121(void);
 };
