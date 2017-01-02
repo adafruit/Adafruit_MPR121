@@ -20,7 +20,11 @@ Adafruit_MPR121::Adafruit_MPR121() {
 }
 
 boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
-  Wire.begin();
+  begin(i2caddr, D2, D1);
+}
+
+boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sda_pin, uint8_t scl_pin) {
+  Wire.begin(sda_pin, scl_pin);
     
   _i2caddr = i2caddr;
 
