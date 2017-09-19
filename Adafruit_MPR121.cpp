@@ -24,6 +24,20 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
     
   _i2caddr = i2caddr;
 
+  return initMPR121();
+}
+
+#if defined(ESP8266)
+boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t sdaPin, uint8_t sclPin) {
+  Wire.begin(sdaPin, sclPin);
+    
+  _i2caddr = i2caddr;
+
+  return initMPR121();
+}
+#endif
+
+boolean Adafruit_MPR121::initMPR121(){
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
   delay(1);
@@ -39,8 +53,7 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
   
   if (c != 0x24) return false;
 
-
-  setThreshholds(12, 6);
+  setThresholds(12, 6);
   writeRegister(MPR121_MHDR, 0x01);
   writeRegister(MPR121_NHDR, 0x01);
   writeRegister(MPR121_NCLR, 0x0E);
@@ -66,14 +79,122 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
 //  writeRegister(MPR121_LOWLIMIT, 50);
   // enable all electrodes
   writeRegister(MPR121_ECR, 0x8F);  // start with first 5 bits of baseline tracking
-
   return true;
 }
 
-void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
+/*
+* This method is used to set the global debounce timeout for all channels based on time.
+* Note: this is not the chip-internal debounce! You might want to use setInternalDebounce()!
+* Debounce is used to avoid double processing of a single touch. 
+*/
+void Adafruit_MPR121::setDebounce(uint16_t debounce) {
+  _debounce = debounce;
+}
 
-  setThresholds(touch, release);
+/*
+* This method is used to set a channel to a specific type;
+* used as touch sensor or LED controller.
+* Returns true on success
+*/
+boolean Adafruit_MPR121::setChannelType(uint8_t channelID, uint8_t type) {
+  //first 4 (0-3) channels can not be set to LED mode
+  if(type != MPR121_SENSOR && channelID <= 3){
+    return false;
   }
+  
+  if(type >= 3){
+    //unknown type
+    return false;
+  }
+  //apply config for the channel  
+  _channels[channelID]._type = type;
+   
+  unsigned char bitmask =  1<<(channelID-4);
+  
+  //go to stop mode to be able to write configuration registers
+  writeRegister(MPR121_ECR, 0x00);  // start with first 5 bits of baseline tracking
+  
+  //set channel enabled
+  uint8_t stuEnabled = readRegister8(MPR121_GPIOEN); 
+  writeRegister(MPR121_GPIOEN, stuEnabled | bitmask);
+  
+  //set direction
+  uint8_t stuDirection = readRegister8(MPR121_GPIODIR);
+  if(type == MPR121_GPIO_IN){
+      writeRegister(MPR121_GPIODIR, stuDirection & ~bitmask);
+  }else{
+      writeRegister(MPR121_GPIODIR,stuDirection | bitmask);
+  }
+  
+  //Set control0 register
+  uint8_t stuCtrl0 = readRegister8(MPR121_GPIOCTL0);
+  writeRegister(MPR121_GPIOCTL0, stuCtrl0 & ~bitmask);
+  
+  //Set control1 register
+  uint8_t stuCtrl1 = readRegister8(MPR121_GPIOCTL1);
+  writeRegister(MPR121_GPIOCTL1, stuCtrl1 & ~bitmask);
+ 
+  //enable electrodes again -> run mode
+  //fill this register with the highest sensor id +1
+  for (uint8_t i=11; i>0; i--){
+      if(_channels[i]._type == MPR121_SENSOR){
+        writeRegister(MPR121_ECR, i+1);
+        break;
+      }  
+  }
+}
+
+/*
+* Returns the configured type of the channel
+*/
+uint8_t Adafruit_MPR121::getChannelType(uint8_t channelID) {
+    return _channels[channelID]._type;
+}
+
+/*
+* returns the GPIO status of the specific channel;
+* channel 0 -  3 always return false -> sensor only
+* channel 4 - 11:
+    MPR121_SENSOR   -> return false
+*   MPR121_GPIO_IN  -> read from chip, save to channel config and return status
+*   MPR121_GPIO_OUT -> get status from channel config: channel._gpioHigh.
+*/
+boolean Adafruit_MPR121::getGPIOStatus(uint8_t channelID){
+    if(channelID <= 3 || _channels[channelID]._type == MPR121_SENSOR){
+      return false;
+    }else if(_channels[channelID]._type == MPR121_GPIO_OUT){
+      return _channels[channelID]._gpioHigh;
+    }else{
+      // MPR121_GPIO_IN -> read current status from chip
+      uint8_t status = readRegister8(MPR121_GPIODATA);
+      _channels[channelID]._gpioHigh = (status >> (channelID-4)) & 1;
+      return _channels[channelID]._gpioHigh;
+    }
+}
+
+/*
+* This function is used to enabled/disable (set high/low) the GPIO port on a specific channel.
+* If the channel is configured as MPR121_SENSOR this method is ignored.
+*/
+void Adafruit_MPR121::setGPIOEnabled(uint8_t channelID, boolean enable){
+  if(_channels[channelID]._type != MPR121_GPIO_OUT){
+    return;
+  }
+  
+  uint8_t status = readRegister8(MPR121_GPIOSET);
+  if(enable){   
+    writeRegister(MPR121_GPIOSET,1 << (channelID-4));
+  }else{
+    writeRegister(MPR121_GPIOCLR,1 << (channelID-4));
+  }
+  //save status to channel configuration for later use
+  _channels[channelID]._gpioHigh = enable;
+}
+
+
+void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
+  setThresholds(touch, release);
+}
 
 void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
   for (uint8_t i=0; i<12; i++) {
@@ -93,9 +214,35 @@ uint16_t  Adafruit_MPR121::baselineData(uint8_t t) {
   return (bl << 2);
 }
 
+/*
+* Checks the touch status for a single channel including debounce
+*/
+boolean Adafruit_MPR121::touched(uint8_t channel){
+  //if channel is no used as MPR121_SENSOR it is never touched
+  if(_channels[channel]._type != MPR121_SENSOR) {
+    return false;
+  }
+  
+  // check debounce
+  if((_lastTouch + _debounce) <= millis()) { 
+     // check touched
+     uint16_t touched = this->touched();
+     for (uint8_t i=0; i<12; i++){
+        //set touch state
+        _channels[i]._touched = touched & _BV(i);
+  	 }
+  }
+  return _channels[channel]._touched;
+}
+
 uint16_t  Adafruit_MPR121::touched(void) {
-  uint16_t t = readRegister16(MPR121_TOUCHSTATUS_L);
-  return t & 0x0FFF;
+  uint16_t result = 0;
+
+  //reset debounce
+  _lastTouch = millis();
+  //else read status from MPR121 registers
+  result = readRegister16(MPR121_TOUCHSTATUS_L) & 0x0FFF; 
+  return result;
 }
 
 /*********************************************************************/
@@ -104,7 +251,7 @@ uint16_t  Adafruit_MPR121::touched(void) {
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
     Wire.beginTransmission(_i2caddr);
     Wire.write(reg);
-    Wire.endTransmission(false);
+    Wire.endTransmission(false);    
     while (Wire.requestFrom(_i2caddr, 1) != 1);
     return ( Wire.read());
 }
