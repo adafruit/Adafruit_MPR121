@@ -40,7 +40,7 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
   if (c != 0x24) return false;
 
 
-  setThreshholds(12, 6);
+  setThresholds(12, 6);
   writeRegister(MPR121_MHDR, 0x01);
   writeRegister(MPR121_NHDR, 0x01);
   writeRegister(MPR121_NCLR, 0x0E);
