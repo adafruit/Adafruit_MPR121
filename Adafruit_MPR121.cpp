@@ -19,7 +19,7 @@
 Adafruit_MPR121::Adafruit_MPR121() {
 }
 
-boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
+boolean Adafruit_MPR121::begin(uint8_t i2caddr, uint8_t touchThreshold, uint8_t releaseThreshold) {
   Wire.begin();
     
   _i2caddr = i2caddr;
@@ -40,7 +40,7 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
   if (c != 0x24) return false;
 
 
-  setThreshholds(12, 6);
+  setThreshholds(touchThreshold, releaseThreshold);
   writeRegister(MPR121_MHDR, 0x01);
   writeRegister(MPR121_NHDR, 0x01);
   writeRegister(MPR121_NCLR, 0x0E);

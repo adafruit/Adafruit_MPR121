@@ -74,7 +74,7 @@ class Adafruit_MPR121 {
   // Hardware I2C
   Adafruit_MPR121(void);
 
-  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
+  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT, uint8_t touchThreshold = MPR121_TOUCH_THRESHOLD_DEFAULT, uint8_t releaseThreshold = MPR121_RELEASE_THRESHOLD_DEFAULT);
 
   uint16_t filteredData(uint8_t t);
   uint16_t  baselineData(uint8_t t);
