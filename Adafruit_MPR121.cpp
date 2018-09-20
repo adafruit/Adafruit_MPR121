@@ -130,3 +130,9 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
     Wire.write((uint8_t)(value));
     Wire.endTransmission();
 }
+
+void Adafruit_MPR121::resetWriteRegister(uint8_t reg, uint8_t value) {
+    writeRegister(MPR121_ECR, 0x00);
+    writeRegister(reg, value);
+    writeRegister(MPR121_ECR, 0x8F);
+}

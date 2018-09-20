@@ -84,6 +84,7 @@ class Adafruit_MPR121 {
   uint8_t readRegister8(uint8_t reg);
   uint16_t readRegister16(uint8_t reg);
   void writeRegister(uint8_t reg, uint8_t value);
+  void resetWriteRegister(uint8_t reg, uint8_t value);
   uint16_t touched(void);
   // Add deprecated attribute so that the compiler shows a warning
   __attribute__((deprecated)) void setThreshholds(uint8_t touch, uint8_t release);
