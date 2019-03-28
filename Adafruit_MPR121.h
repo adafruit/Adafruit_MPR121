@@ -3,7 +3,7 @@
  *
  *  This is a library for the MPR121 12-Channel Capacitive Sensor
  *
- *  Designed specifically to work with the Adafruit BNO055 Breakout.
+ *  Designed specifically to work with the MPR121 board.
  *
  *  Pick one up today in the adafruit shop!
  *  ------> https://www.adafruit.com/product/1982

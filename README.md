@@ -4,6 +4,8 @@
 
 Tested and works great with the Adafruit MPR121
   * https://www.adafruit.com/products/1982
+  * https://www.adafruit.com/product/2024
+  * https://www.adafruit.com/product/2340
  
 Check out the links above for our tutorials and wiring diagrams. 
 These sensors use I2C to communicate, 2+ pins are required to interface
