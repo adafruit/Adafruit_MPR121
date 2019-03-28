@@ -73,13 +73,13 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a41a5019501062ae1f94c121c580514b5"><td class="memItemLeft" align="right" valign="top"><a id="a41a5019501062ae1f94c121c580514b5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a41a5019501062ae1f94c121c580514b5">Adafruit_MPR121</a> (void)</td></tr>
-<tr class="memdesc:a41a5019501062ae1f94c121c580514b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
-<tr class="separator:a41a5019501062ae1f94c121c580514b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae269064c42ced60c7450eab53ada5eee"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#ae269064c42ced60c7450eab53ada5eee">begin</a> (uint8_t i2caddr=<a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a>)</td></tr>
-<tr class="memdesc:ae269064c42ced60c7450eab53ada5eee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin an MPR121 object on a given I2C bus. This function resets the device and writes the default settings.  <a href="#ae269064c42ced60c7450eab53ada5eee">More...</a><br /></td></tr>
-<tr class="separator:ae269064c42ced60c7450eab53ada5eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"><td class="memItemLeft" align="right" valign="top"><a id="afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#afc5b7cb3bc0ba4a17d3a1d8728bd3f7b">Adafruit_MPR121</a> ()</td></tr>
+<tr class="memdesc:afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca737eda0f6d6ad774c4c378f165c957"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#aca737eda0f6d6ad774c4c378f165c957">begin</a> (uint8_t i2caddr=<a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a>, TwoWire *theWire=&amp;Wire)</td></tr>
+<tr class="memdesc:aca737eda0f6d6ad774c4c378f165c957"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin an MPR121 object on a given I2C bus. This function resets the device and writes the default settings.  <a href="#aca737eda0f6d6ad774c4c378f165c957">More...</a><br /></td></tr>
+<tr class="separator:aca737eda0f6d6ad774c4c378f165c957"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#aa5bda4ff04ee361d857b80d95bddbbdb">filteredData</a> (uint8_t t)</td></tr>
 <tr class="memdesc:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the filtered data from channel t. The ADC raw data outputs run through 3 levels of digital filtering to filter out the high frequency and low frequency noise encountered. For detailed information on this filtering see page 6 of the device datasheet.  <a href="#aa5bda4ff04ee361d857b80d95bddbbdb">More...</a><br /></td></tr>
 <tr class="separator:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,17 +99,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a08b26f327e99b6f205df8907eafcab4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the touch status of all 13 channels as bit values in a 12 bit integer.  <a href="#a08b26f327e99b6f205df8907eafcab4c">More...</a><br /></td></tr>
 <tr class="separator:a08b26f327e99b6f205df8907eafcab4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a307f1c580221584c75eb0c5da34982e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a307f1c580221584c75eb0c5da34982e0">setThreshholds</a> (uint8_t touch, uint8_t release) __attribute__((deprecated))</td></tr>
-<tr class="memdesc:a307f1c580221584c75eb0c5da34982e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEPRECATED. Use <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release)</a> instead.  <a href="#a307f1c580221584c75eb0c5da34982e0">More...</a><br /></td></tr>
+<tr class="memdesc:a307f1c580221584c75eb0c5da34982e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">DEPRECATED. Use <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds</a>(uint8_t touch, uint8_t release) instead.  <a href="#a307f1c580221584c75eb0c5da34982e0">More...</a><br /></td></tr>
 <tr class="separator:a307f1c580221584c75eb0c5da34982e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8588eabc494059b6fe5231b8dd2be416"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416">setThresholds</a> (uint8_t touch, uint8_t release)</td></tr>
-<tr class="memdesc:a8588eabc494059b6fe5231b8dd2be416"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the touch and release thresholds for all 13 channels on the device to the passed values. The threshold is defined as a deviation value from the baseline value, so it remains constant even baseline value changes. Typically the touch threshold is a little bigger than the release threshold to touch debounce and hysteresis.  <a href="#a8588eabc494059b6fe5231b8dd2be416">More...</a><br /></td></tr>
+<tr class="memdesc:a8588eabc494059b6fe5231b8dd2be416"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the touch and release thresholds for all 13 channels on the device to the passed values. The threshold is defined as a deviation value from the baseline value, so it remains constant even baseline value changes. Typically the touch threshold is a little bigger than the release threshold to touch debounce and hysteresis. For typical touch application, the value can be in range 0x05~0x30 for example. The setting of the threshold is depended on the actual application. For the operation details and how to set the threshold refer to application note AN3892 and MPR121 design guidelines.  <a href="#a8588eabc494059b6fe5231b8dd2be416">More...</a><br /></td></tr>
 <tr class="separator:a8588eabc494059b6fe5231b8dd2be416"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that stores state and functions for interacting with MPR121 proximity capacitive touch sensor controller. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae269064c42ced60c7450eab53ada5eee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae269064c42ced60c7450eab53ada5eee">&#9670;&nbsp;</a></span>begin()</h2>
+<a id="aca737eda0f6d6ad774c4c378f165c957"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca737eda0f6d6ad774c4c378f165c957">&#9670;&nbsp;</a></span>begin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -118,8 +118,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">boolean Adafruit_MPR121::begin </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>i2caddr</em> = <code><a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a></code></td><td>)</td>
+          <td class="paramname"><em>i2caddr</em> = <code><a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">TwoWire *&#160;</td>
+          <td class="paramname"><em>theWire</em> = <code>&amp;Wire</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -128,6 +138,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">i2caddr</td><td>the i2c address the device can be found on. Defaults to 0x5A. </td></tr>
+    <tr><td class="paramname">*theWire</td><td>Wire object </td></tr>
   </table>
   </dd>
 </dl>
@@ -327,11 +338,11 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>DEPRECATED. Use <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release)</a> instead. </p>
+<p>DEPRECATED. Use <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds</a>(uint8_t touch, uint8_t release) instead. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">touch</td><td>see <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release)</a> </td></tr>
-    <tr><td class="paramname">release</td><td>see <a class="el" href="class_adafruit___m_p_r121.html#a8588eabc494059b6fe5231b8dd2be416" title="Set the touch and release thresholds for all 13 channels on the device to the passed values...">Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release)</a> </td></tr>
+    <tr><td class="paramname">touch</td><td>see Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t *release) </td></tr>
+    <tr><td class="paramname">release</td><td>see Adafruit_MPR121::setThresholds(uint8_t touch, *uint8_t release) </td></tr>
   </table>
   </dd>
 </dl>
@@ -364,8 +375,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Set the touch and release thresholds for all 13 channels on the device to the passed values. The threshold is defined as a deviation value from the baseline value, so it remains constant even baseline value changes. Typically the touch threshold is a little bigger than the release threshold to touch debounce and hysteresis. </p>
-<p>For typical touch application, the value can be in range 0x05~0x30 for example. The setting of the threshold is depended on the actual application. For the operation details and how to set the threshold refer to application note AN3892 and MPR121 design guidelines.</p>
+<p>Set the touch and release thresholds for all 13 channels on the device to the passed values. The threshold is defined as a deviation value from the baseline value, so it remains constant even baseline value changes. Typically the touch threshold is a little bigger than the release threshold to touch debounce and hysteresis. For typical touch application, the value can be in range 0x05~0x30 for example. The setting of the threshold is depended on the actual application. For the operation details and how to set the threshold refer to application note AN3892 and MPR121 design guidelines. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">touch</td><td>the touch threshold value from 0 to 255. </td></tr>
