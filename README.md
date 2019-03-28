@@ -1,15 +1,16 @@
 # Adafruit MPR121 Library [![Build Status](https://travis-ci.org/adafruit/Adafruit_MPR121.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit_MPR121)
 
-<img src="https://cdn-shop.adafruit.com/970x728/1982-00.jpg" height="300"/>
+<a href="https://www.adafruit.com/products/1982"><img src="https://cdn-shop.adafruit.com/970x728/1982-00.jpg" height="300"/></a>
 
-This is a library for the Adafruit MPR121 Capacitive touch sensor breakout:
+Tested and works great with the Adafruit MPR121
   * https://www.adafruit.com/products/1982
  
-Check out the links above for our tutorials and wiring diagrams. This chip uses I2C to communicate
+Check out the links above for our tutorials and wiring diagrams. 
+These sensors use I2C to communicate, 2+ pins are required to interface
 
 Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
 
-Written by Limor Fried/Ladyada for Adafruit Industries.
+Written by Limor Fried/Ladyada (Adafruit Industries).
 MIT license, all text above must be included in any redistribution
 
 <!-- START COMPATIBILITY TABLE -->
