@@ -99,6 +99,7 @@ public:
 
 private:
   int8_t _i2caddr;
+  TwoWire *_wire;
 };
 
 #endif
