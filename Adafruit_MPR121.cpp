@@ -35,15 +35,19 @@ Adafruit_MPR121::Adafruit_MPR121() {}
 
 /*!
  *  @brief    Begin an MPR121 object on a given I2C bus. This function resets
- * the device and writes the default settings.
+ *            the device and writes the default settings.
  *  @param    i2caddr
  *            the i2c address the device can be found on. Defaults to 0x5A.
+ *  @param    *theWire
+ *            Wire object
  *  @returns  true on success, false otherwise
  */
-boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
-  Wire.begin();
+boolean Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire) {
 
   _i2caddr = i2caddr;
+  _wire = theWire;
+
+  _wire->begin();
 
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
@@ -95,11 +99,9 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr) {
  *  @brief      DEPRECATED. Use Adafruit_MPR121::setThresholds(uint8_t touch,
  *              uint8_t release) instead.
  *  @param      touch
- *              see Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t
- * *release)
+ *              see Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t *release)
  *  @param      release
- *              see Adafruit_MPR121::setThresholds(uint8_t touch, *uint8_t
- * release)
+ *              see Adafruit_MPR121::setThresholds(uint8_t touch, *uint8_t release)
  */
 void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
   setThresholds(touch, release);
@@ -174,42 +176,40 @@ uint16_t Adafruit_MPR121::touched(void) {
  *  @returns    the 8 bit value that was read.
  */
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
-  Wire.beginTransmission(_i2caddr);
-  Wire.write(reg);
-  Wire.endTransmission(false);
-  Wire.requestFrom(_i2caddr, 1);
-  if (Wire.available() < 1)
+  _wire->beginTransmission(_i2caddr);
+  _wire->write(reg);
+  _wire->endTransmission(false);
+  _wire->requestFrom(_i2caddr, 1);
+  if (_wire->available() < 1)
     return 0;
-  return (Wire.read());
+  return (_wire->read());
 }
 
 /*!
  *  @brief      Read the contents of a 16 bit device register.
- *
  *  @param      reg the register address to read from
  *  @returns    the 16 bit value that was read.
  */
 uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
-  Wire.beginTransmission(_i2caddr);
-  Wire.write(reg);
-  Wire.endTransmission(false);
-  Wire.requestFrom(_i2caddr, 2);
-  if (Wire.available() < 2)
+  _wire->beginTransmission(_i2caddr);
+  _wire->write(reg);
+  _wire->endTransmission(false);
+  _wire->requestFrom(_i2caddr, 2);
+  if (_wire->available() < 2)
     return 0;
-  uint16_t v = Wire.read();
-  v |= ((uint16_t)Wire.read()) << 8;
+  uint16_t v = _wire->read();
+  v |= ((uint16_t)_wire->read()) << 8;
   return v;
 }
 
 /*!
     @brief  Writes 8-bits to the specified destination register
-
     @param  reg the register address to write to
     @param  value the value to write
 */
 void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
-  Wire.beginTransmission(_i2caddr);
-  Wire.write((uint8_t)reg);
-  Wire.write((uint8_t)(value));
-  Wire.endTransmission();
+  _wire->beginTransmission(_i2caddr);
+  _wire->write((uint8_t)reg);
+  _wire->write((uint8_t)(value));
+  _wire->endTransmission();
 }

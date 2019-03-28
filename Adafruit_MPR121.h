@@ -83,7 +83,7 @@ public:
   // Hardware I2C
   Adafruit_MPR121();
 
-  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT);
+  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT, TwoWire *theWire = &Wire);
 
   uint16_t filteredData(uint8_t t);
   uint16_t baselineData(uint8_t t);
