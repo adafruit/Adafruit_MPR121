@@ -89,8 +89,7 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire) {
   //  writeRegister(MPR121_TARGETLIMIT, 100); // should be ~400 (100 shifted)
   //  writeRegister(MPR121_LOWLIMIT, 50);
   // enable all electrodes
-  writeRegister(MPR121_ECR,
-                0x8F); // start with first 5 bits of baseline tracking
+  writeRegister(MPR121_ECR, 0x8F); // start with first 5 bits of baseline tracking
 
   return true;
 }
@@ -123,10 +122,15 @@ void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
  *              the release threshold from 0 to 255.
  */
 void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
+  writeRegister(MPR121_ECR, 0x0); // first stop
+  
+  // set all thresholds (the same)
   for (uint8_t i = 0; i < 12; i++) {
     writeRegister(MPR121_TOUCHTH_0 + 2 * i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2 * i, release);
   }
+  
+  writeRegister(MPR121_ECR, 0x8F); // start again with first 5 bits of baseline tracking
 }
 
 /*!
