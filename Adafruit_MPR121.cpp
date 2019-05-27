@@ -210,11 +210,12 @@ uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
 void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
     //MPR121 must be put in Stop Mode to write to most registers
     bool stop_required = true;
+    uint8_t ECR = readRegister8(MPR121_ECR); // first get the current set value of the MPR121_ECR register
     if (reg == MPR121_ECR || (0x73 <= reg && reg <= 0x7A)) { stop_required = false;}
     if (stop_required) {
       _wire->beginTransmission(_i2caddr);
       _wire->write(MPR121_ECR);
-      _wire->write(0x00);
+      _wire->write(0x00);   // clear this register to set stop modus
       _wire->endTransmission();
     }                
                   
@@ -226,7 +227,7 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
   if (stop_required) {
     _wire->beginTransmission(_i2caddr);
     _wire->write(MPR121_ECR);
-    _wire->write(0x8F);
+    _wire->write(ECR);  // write back the previous set ECR settings
     _wire->endTransmission();
   }
 }
