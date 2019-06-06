@@ -28,6 +28,9 @@
 
 #include "Adafruit_MPR121.h"
 
+// uncomment to use autoconfig !
+//#define AUTOCONFIG // use autoconfig (Yes it works pretty well!)
+
 /*!
  *  @brief      Default constructor
  */
@@ -83,13 +86,18 @@ boolean Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire) {
   writeRegister(MPR121_CONFIG1, 0x10); // default, 16uA charge current
   writeRegister(MPR121_CONFIG2, 0x20); // 0.5uS encoding, 1ms period
 
-  //  writeRegister(MPR121_AUTOCONFIG0, 0x8F);
-
-  //  writeRegister(MPR121_UPLIMIT, 150);
-  //  writeRegister(MPR121_TARGETLIMIT, 100); // should be ~400 (100 shifted)
-  //  writeRegister(MPR121_LOWLIMIT, 50);
-  // enable all electrodes
-  writeRegister(MPR121_ECR, 0x8F); // start with first 5 bits of baseline tracking
+  #ifdef AUTOCONFIG
+  writeRegister(MPR121_AUTOCONFIG0, 0x0B);
+  
+  // correct values for Vdd = 3.3V
+  writeRegister(MPR121_UPLIMIT, 200);     // ((Vdd - 0.7)/Vdd) * 256
+  writeRegister(MPR121_TARGETLIMIT, 180); // UPLIMIT * 0.9
+  writeRegister(MPR121_LOWLIMIT, 130);    // UPLIMIT * 0.65
+  #endif
+  
+  // enable X electrodes and start MPR121
+  byte ECR_SETTING = B10000000 + 12;  // 5 bits for baseline tracking & proximity disabled + X amount of electrodes running (12)
+  writeRegister(MPR121_ECR, ECR_SETTING); // start with above ECR setting
 
   return true;
 }
@@ -210,11 +218,12 @@ uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
 void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
     //MPR121 must be put in Stop Mode to write to most registers
     bool stop_required = true;
+    uint8_t ECR = readRegister8(MPR121_ECR); // first get the current set value of the MPR121_ECR register
     if (reg == MPR121_ECR || (0x73 <= reg && reg <= 0x7A)) { stop_required = false;}
     if (stop_required) {
       _wire->beginTransmission(_i2caddr);
       _wire->write(MPR121_ECR);
-      _wire->write(0x00);
+      _wire->write(0x00);   // clear this register to set stop modus
       _wire->endTransmission();
     }                
                   
@@ -226,7 +235,7 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
   if (stop_required) {
     _wire->beginTransmission(_i2caddr);
     _wire->write(MPR121_ECR);
-    _wire->write(0x8F);
+    _wire->write(ECR);  // write back the previous set ECR settings
     _wire->endTransmission();
   }
 }
