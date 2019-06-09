@@ -199,10 +199,7 @@ uint16_t Adafruit_MPR121::touched(void) {
  *  @returns    the 8 bit value that was read.
  */
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
-  _wire->beginTransmission(_i2caddr);
-  _wire->write(reg);
-  _wire->endTransmission(false);
-  _wire->requestFrom(_i2caddr, 1);
+  _wire.requestFrom(_i2caddr, 1, reg, 1, 0);
   if (_wire->available() < 1)
     return 0;
   return (_wire->read());
@@ -214,10 +211,7 @@ uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
  *  @returns    the 16 bit value that was read.
  */
 uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
-  _wire->beginTransmission(_i2caddr);
-  _wire->write(reg);
-  _wire->endTransmission(false);
-  _wire->requestFrom(_i2caddr, 2);
+  _wire.requestFrom(_i2caddr, 2, reg, 1, 0);
   if (_wire->available() < 2)
     return 0;
   uint16_t v = _wire->read();
