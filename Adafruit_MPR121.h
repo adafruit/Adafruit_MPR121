@@ -26,7 +26,7 @@
 #include <Wire.h>
 
 // The default I2C address
-#define MPR121_I2CADDR_DEFAULT 0x5A ///< default I2C address
+#define MPR121_I2CADDR_DEFAULT 0x5A        ///< default I2C address
 #define MPR121_TOUCH_THRESHOLD_DEFAULT 12  ///< default touch threshold value
 #define MPR121_RELEASE_THRESHOLD_DEFAULT 6 ///< default relese threshold value
 
