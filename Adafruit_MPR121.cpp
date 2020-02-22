@@ -241,7 +241,7 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
   if (stop_required) {
     _wire->beginTransmission(_i2caddr);
     _wire->write(MPR121_ECR);
-    _wire->write(0x00); // clear this register to set stop modus
+    _wire->write((byte)0x00); // clear this register to set stop modus
     _wire->endTransmission();
   }
 
