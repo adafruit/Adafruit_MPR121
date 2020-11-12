@@ -50,8 +50,7 @@ Adafruit_MPR121::Adafruit_MPR121() {}
  *  @returns  true on success, false otherwise
  */
 bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
-                               uint8_t touchThreshold,
-                               uint8_t releaseThreshold) {
+                            uint8_t touchThreshold, uint8_t releaseThreshold) {
 
   if (i2c_dev) {
     delete i2c_dev;
@@ -144,15 +143,11 @@ void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
  *              the release threshold from 0 to 255.
  */
 void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
-  // first stop sensor to make changes
-  writeRegister(MPR121_ECR, 0x00);
   // set all thresholds (the same)
   for (uint8_t i = 0; i < 12; i++) {
     writeRegister(MPR121_TOUCHTH_0 + 2 * i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2 * i, release);
   }
-  // turn the sensor on again
-  writeRegister(MPR121_ECR, 0x8F);
 }
 
 /*!
@@ -203,8 +198,7 @@ uint16_t Adafruit_MPR121::touched(void) {
  *  @returns    the 8 bit value that was read.
  */
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
-  Adafruit_BusIO_Register thereg =
-    Adafruit_BusIO_Register(i2c_dev, reg, 1);
+  Adafruit_BusIO_Register thereg = Adafruit_BusIO_Register(i2c_dev, reg, 1);
 
   return (thereg.read());
 }
@@ -216,7 +210,7 @@ uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
  */
 uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
   Adafruit_BusIO_Register thereg =
-    Adafruit_BusIO_Register(i2c_dev, reg, 2, LSBFIRST);
+      Adafruit_BusIO_Register(i2c_dev, reg, 2, LSBFIRST);
 
   return (thereg.read());
 }
@@ -232,7 +226,7 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
 
   // first get the current set value of the MPR121_ECR register
   Adafruit_BusIO_Register ecr_reg =
-    Adafruit_BusIO_Register(i2c_dev, MPR121_ECR, 1);
+      Adafruit_BusIO_Register(i2c_dev, MPR121_ECR, 1);
 
   uint8_t ecr_backup = ecr_reg.read();
   if ((reg == MPR121_ECR) || ((0x73 <= reg) && (reg <= 0x7A))) {
@@ -244,8 +238,7 @@ void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
     ecr_reg.write(0x00);
   }
 
-  Adafruit_BusIO_Register the_reg =
-    Adafruit_BusIO_Register(i2c_dev, reg, 1);
+  Adafruit_BusIO_Register the_reg = Adafruit_BusIO_Register(i2c_dev, reg, 1);
   the_reg.write(value);
 
   if (stop_required) {
