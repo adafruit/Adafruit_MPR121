@@ -23,7 +23,8 @@
 #define ADAFRUIT_MPR121_H
 
 #include "Arduino.h"
-#include <Wire.h>
+#include <Adafruit_I2CDevice.h>
+#include <Adafruit_BusIO_Register.h>
 
 // The default I2C address
 #define MPR121_I2CADDR_DEFAULT 0x5A        ///< default I2C address
@@ -85,7 +86,7 @@ public:
   // Hardware I2C
   Adafruit_MPR121();
 
-  boolean begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT,
+  bool begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT,
                 TwoWire *theWire = &Wire,
                 uint8_t touchThreshold = MPR121_TOUCH_THRESHOLD_DEFAULT,
                 uint8_t releaseThreshold = MPR121_RELEASE_THRESHOLD_DEFAULT);
@@ -103,8 +104,7 @@ public:
   void setThresholds(uint8_t touch, uint8_t release);
 
 private:
-  int8_t _i2caddr;
-  TwoWire *_wire;
+  Adafruit_I2CDevice *i2c_dev = NULL;
 };
 
 #endif
