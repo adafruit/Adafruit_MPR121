@@ -49,14 +49,17 @@ Adafruit_MPR121::Adafruit_MPR121() {}
  *            release detection threshold value
  *  @returns  true on success, false otherwise
  */
-boolean Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
-                               uint8_t touchThreshold,
-                               uint8_t releaseThreshold) {
+bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
+                            uint8_t touchThreshold, uint8_t releaseThreshold) {
 
-  _i2caddr = i2caddr;
-  _wire = theWire;
+  if (i2c_dev) {
+    delete i2c_dev;
+  }
+  i2c_dev = new Adafruit_I2CDevice(i2caddr, theWire);
 
-  _wire->begin();
+  if (!i2c_dev->begin()) {
+    return false;
+  }
 
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
@@ -140,15 +143,11 @@ void Adafruit_MPR121::setThreshholds(uint8_t touch, uint8_t release) {
  *              the release threshold from 0 to 255.
  */
 void Adafruit_MPR121::setThresholds(uint8_t touch, uint8_t release) {
-  // first stop sensor to make changes
-  writeRegister(MPR121_ECR, 0x00);
   // set all thresholds (the same)
   for (uint8_t i = 0; i < 12; i++) {
     writeRegister(MPR121_TOUCHTH_0 + 2 * i, touch);
     writeRegister(MPR121_RELEASETH_0 + 2 * i, release);
   }
-  // turn the sensor on again
-  writeRegister(MPR121_ECR, 0x8F);
 }
 
 /*!
@@ -199,13 +198,9 @@ uint16_t Adafruit_MPR121::touched(void) {
  *  @returns    the 8 bit value that was read.
  */
 uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
-  _wire->beginTransmission(_i2caddr);
-  _wire->write(reg);
-  _wire->endTransmission(false);
-  _wire->requestFrom(_i2caddr, 1);
-  if (_wire->available() < 1)
-    return 0;
-  return (_wire->read());
+  Adafruit_BusIO_Register thereg = Adafruit_BusIO_Register(i2c_dev, reg, 1);
+
+  return (thereg.read());
 }
 
 /*!
@@ -214,15 +209,10 @@ uint8_t Adafruit_MPR121::readRegister8(uint8_t reg) {
  *  @returns    the 16 bit value that was read.
  */
 uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
-  _wire->beginTransmission(_i2caddr);
-  _wire->write(reg);
-  _wire->endTransmission(false);
-  _wire->requestFrom(_i2caddr, 2);
-  if (_wire->available() < 2)
-    return 0;
-  uint16_t v = _wire->read();
-  v |= ((uint16_t)_wire->read()) << 8;
-  return v;
+  Adafruit_BusIO_Register thereg =
+      Adafruit_BusIO_Register(i2c_dev, reg, 2, LSBFIRST);
+
+  return (thereg.read());
 }
 
 /*!
@@ -233,27 +223,26 @@ uint16_t Adafruit_MPR121::readRegister16(uint8_t reg) {
 void Adafruit_MPR121::writeRegister(uint8_t reg, uint8_t value) {
   // MPR121 must be put in Stop Mode to write to most registers
   bool stop_required = true;
-  uint8_t ECR = readRegister8(
-      MPR121_ECR); // first get the current set value of the MPR121_ECR register
-  if (reg == MPR121_ECR || (0x73 <= reg && reg <= 0x7A)) {
+
+  // first get the current set value of the MPR121_ECR register
+  Adafruit_BusIO_Register ecr_reg =
+      Adafruit_BusIO_Register(i2c_dev, MPR121_ECR, 1);
+
+  uint8_t ecr_backup = ecr_reg.read();
+  if ((reg == MPR121_ECR) || ((0x73 <= reg) && (reg <= 0x7A))) {
     stop_required = false;
   }
+
   if (stop_required) {
-    _wire->beginTransmission(_i2caddr);
-    _wire->write(MPR121_ECR);
-    _wire->write((byte)0x00); // clear this register to set stop modus
-    _wire->endTransmission();
+    // clear this register to set stop mode
+    ecr_reg.write(0x00);
   }
 
-  _wire->beginTransmission(_i2caddr);
-  _wire->write((uint8_t)reg);
-  _wire->write((uint8_t)(value));
-  _wire->endTransmission();
+  Adafruit_BusIO_Register the_reg = Adafruit_BusIO_Register(i2c_dev, reg, 1);
+  the_reg.write(value);
 
   if (stop_required) {
-    _wire->beginTransmission(_i2caddr);
-    _wire->write(MPR121_ECR);
-    _wire->write(ECR); // write back the previous set ECR settings
-    _wire->endTransmission();
+    // write back the previous set ECR settings
+    ecr_reg.write(ecr_backup);
   }
 }
