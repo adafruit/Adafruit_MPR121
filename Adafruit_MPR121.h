@@ -93,7 +93,7 @@ public:
 
   uint16_t filteredData(uint8_t t);
   uint16_t baselineData(uint8_t t);
-  
+
   void setAutoconfig(boolean autoconfig);
 
   uint8_t readRegister8(uint8_t reg);

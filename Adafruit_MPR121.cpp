@@ -28,7 +28,6 @@
 
 #include "Adafruit_MPR121.h"
 
-
 /*!
  *  @brief      Default constructor
  */
@@ -99,10 +98,10 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
   setAutoconfig(autoconfig);
 
   // enable X electrodes = start MPR121
-  // CL Calibration Lock: B10 = 5 bits for baseline tracking 
+  // CL Calibration Lock: B10 = 5 bits for baseline tracking
   // ELEPROX_EN  proximity: disabled
   // ELE_EN Electrode Enable:  amount of electrodes running (12)
-  byte ECR_SETTING = B10000000 + 12; 
+  byte ECR_SETTING = B10000000 + 12;
   writeRegister(MPR121_ECR, ECR_SETTING); // start with above ECR setting
 
   return true;
