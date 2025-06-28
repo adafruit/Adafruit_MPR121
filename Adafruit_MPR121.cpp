@@ -134,6 +134,8 @@ void Adafruit_MPR121::setAutoconfig(boolean autoconfig) {
   // register map at
   // https://www.nxp.com/docs/en/data-sheet/MPR121.pdf#page=17&zoom=auto,-416,747
   if (autoconfig) {
+    // recommend settings found at
+    // https://www.nxp.com/docs/en/application-note/AN3889.pdf#page=9&zoom=310,-42,373
     // FFI (First Filter Iterations) same as FFI in CONFIG1
     // FFI           → 00 Sets samples taken to 6 (Default)
     // RETRY
@@ -144,6 +146,9 @@ void Adafruit_MPR121::setAutoconfig(boolean autoconfig) {
     // ACE Auto-Configuration Enable
     // 0x0B == B00001011
     writeRegister(MPR121_AUTOCONFIG0, B00001011);
+
+    // details on values
+    // https://www.nxp.com/docs/en/application-note/AN3889.pdf#page=7&zoom=310,-42,792
     // correct values for Vdd = 3.3V
     writeRegister(MPR121_UPLIMIT, 200);     // ((Vdd - 0.7)/Vdd) * 256
     writeRegister(MPR121_TARGETLIMIT, 180); // UPLIMIT * 0.9
