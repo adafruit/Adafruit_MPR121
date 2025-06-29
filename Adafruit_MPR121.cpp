@@ -57,25 +57,31 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
   }
   i2c_dev = new Adafruit_I2CDevice(i2caddr, theWire);
 
+  Serial.println("Adafruit_I2CDevice setup..");
   if (!i2c_dev->begin()) {
+    Serial.println("i2c_dev begin failed..");
     return false;
   }
+  Serial.println("done.");
 
+  Serial.println("send soft reset..");
   // soft reset
   writeRegister(MPR121_SOFTRESET, 0x63);
   delay(1);
   for (uint8_t i = 0; i < 0x7F; i++) {
     //  Serial.print("$"); Serial.print(i, HEX);
-    //  Serial.print(": 0x"); Serial.println(readRegister8(i));
+    //  Serial.print(": 0x"); Serial.println(readRegister8(i), HEX);
   }
 
   writeRegister(MPR121_ECR, 0x0);
 
+  Serial.print("read: MPR121_CONFIG2 ");
   uint8_t c = readRegister8(MPR121_CONFIG2);
-
+  Serial.println(c, HEX);
   if (c != 0x24)
     return false;
 
+  Serial.println("write Configuration to sensor ...");
   setThresholds(touchThreshold, releaseThreshold);
   writeRegister(MPR121_MHDR, 0x01);
   writeRegister(MPR121_NHDR, 0x01);
@@ -101,7 +107,7 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
   // CL Calibration Lock: B10 = 5 bits for baseline tracking
   // ELEPROX_EN  proximity: disabled
   // ELE_EN Electrode Enable:  amount of electrodes running (12)
-  byte ECR_SETTING = B10000000 + 12;
+  byte ECR_SETTING = 0b10000000 + 12;
   writeRegister(MPR121_ECR, ECR_SETTING); // start with above ECR setting
 
   return true;
@@ -144,8 +150,8 @@ void Adafruit_MPR121::setAutoconfig(boolean autoconfig) {
     // BVA same as CL in ECR
     // ARE Auto-Reconfiguration Enable
     // ACE Auto-Configuration Enable
-    // 0x0B == B00001011
-    writeRegister(MPR121_AUTOCONFIG0, B00001011);
+    // 0x0B == 0b00001011
+    writeRegister(MPR121_AUTOCONFIG0, 0b00001011);
 
     // details on values
     // https://www.nxp.com/docs/en/application-note/AN3889.pdf#page=7&zoom=310,-42,792
@@ -155,7 +161,7 @@ void Adafruit_MPR121::setAutoconfig(boolean autoconfig) {
     writeRegister(MPR121_LOWLIMIT, 130);    // UPLIMIT * 0.65
   } else {
     // really only disable ACE.
-    writeRegister(MPR121_AUTOCONFIG0, B00001010);
+    writeRegister(MPR121_AUTOCONFIG0, 0b00001010);
   }
 }
 
