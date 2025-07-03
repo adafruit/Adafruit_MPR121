@@ -114,7 +114,7 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
   writeRegister(MPR121_UPLIMIT, 200);     // ((Vdd - 0.7)/Vdd) * 256
   writeRegister(MPR121_TARGETLIMIT, 180); // UPLIMIT * 0.9
   writeRegister(MPR121_LOWLIMIT, 130);    // UPLIMIT * 0.65
-#endif
+#endif //AUTOCONFIG
 
   // enable X electrodes and start MPR121
   byte ECR_SETTING =
