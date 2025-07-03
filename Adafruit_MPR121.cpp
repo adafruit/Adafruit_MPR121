@@ -91,10 +91,22 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
   writeRegister(MPR121_NCLT, 0x00);
   writeRegister(MPR121_FDLT, 0x00);
 
-  writeRegister(MPR121_DEBOUNCE, 0);
-  writeRegister(MPR121_CONFIG1, 0x10); // default, 16uA charge current
-  writeRegister(MPR121_CONFIG2, 0x20); // 0.5uS encoding, 1ms period
+  // Debounce Register (0x5B)
+  uint8_t debounce_touch = 0;   // DT: Debounce number for touch. The value range is 0~7.
+  uint8_t debounce_release = 0; // DR: Debounce number for release. The value range is 0~7.
+  writeRegister(MPR121_DEBOUNCE, (debounce_release & 0x07) << 4 | (debounce_touch & 0x07));
 
+  // AFE Configuration 1 (0x5C)
+  uint8_t cdc_current_uA = 63; // CDC (Charge Discharge Current): bits 0–5 (0–63), 1 step = 1μA
+  uint8_t ffi = 0;             // FFI (First Filter Iterations): bits 6–7
+  writeRegister(MPR121_CONFIG1, ((ffi & 0x03) << 6) | (cdc_current_uA & 0x3F));
+
+  // AFE Configuration 2 (0x5D)
+  uint8_t cdt = 2; // CDT (Charge Discharge Time): bits 7–5
+  uint8_t sfi = 0; // SFI (Samples per Measurement): bits 4–3
+  uint8_t esi = 0; // ESI (Electrode Sample Interval): bits 2–0
+  writeRegister(MPR121_CONFIG2, ((cdt & 0x07) << 5) | ((sfi & 0x03) << 3) | (esi & 0x07));
+  
 #ifdef AUTOCONFIG
   writeRegister(MPR121_AUTOCONFIG0, 0x0B);
 
