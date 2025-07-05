@@ -29,7 +29,7 @@
 #include "Adafruit_MPR121.h"
 
 // uncomment to use autoconfig !
-//#define AUTOCONFIG // use autoconfig (Yes it works pretty well!)
+// #define AUTOCONFIG // use autoconfig (Yes it works pretty well!)
 
 /*!
  *  @brief      Default constructor
