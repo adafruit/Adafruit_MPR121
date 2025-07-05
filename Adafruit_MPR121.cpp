@@ -106,7 +106,7 @@ bool Adafruit_MPR121::begin(uint8_t i2caddr, TwoWire *theWire,
 
   // enable X electrodes and start MPR121
   byte ECR_SETTING =
-      B10000000 + 12; // 5 bits for baseline tracking & proximity disabled + X
+      0b10000000 + 12; // 5 bits for baseline tracking & proximity disabled + X
                       // amount of electrodes running (12)
   writeRegister(MPR121_ECR, ECR_SETTING); // start with above ECR setting
 
