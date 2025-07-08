@@ -77,15 +77,18 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#afc5b7cb3bc0ba4a17d3a1d8728bd3f7b">Adafruit_MPR121</a> ()</td></tr>
 <tr class="memdesc:afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="separator:afc5b7cb3bc0ba4a17d3a1d8728bd3f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac62a47c152877a4fd9ee08dd6fbfc8e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#ac62a47c152877a4fd9ee08dd6fbfc8e6">begin</a> (uint8_t i2caddr=<a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a>, TwoWire *theWire=&amp;Wire, uint8_t touchThreshold=<a class="el" href="_adafruit___m_p_r121_8h.html#a4b3fd951704a4d69529cec6c8996a560">MPR121_TOUCH_THRESHOLD_DEFAULT</a>, uint8_t releaseThreshold=<a class="el" href="_adafruit___m_p_r121_8h.html#af51b589d3c7f29cc43fff6f96715a0e9">MPR121_RELEASE_THRESHOLD_DEFAULT</a>)</td></tr>
-<tr class="memdesc:ac62a47c152877a4fd9ee08dd6fbfc8e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin an MPR121 object on a given I2C bus. This function resets the device and writes the default settings.  <a href="#ac62a47c152877a4fd9ee08dd6fbfc8e6">More...</a><br /></td></tr>
-<tr class="separator:ac62a47c152877a4fd9ee08dd6fbfc8e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f961c9913525f3d8b214127cbdb3339"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a0f961c9913525f3d8b214127cbdb3339">begin</a> (uint8_t i2caddr=<a class="el" href="_adafruit___m_p_r121_8h.html#aa4a9474e42d9c498f600c9ad8781f714">MPR121_I2CADDR_DEFAULT</a>, TwoWire *theWire=&amp;Wire, uint8_t touchThreshold=<a class="el" href="_adafruit___m_p_r121_8h.html#a4b3fd951704a4d69529cec6c8996a560">MPR121_TOUCH_THRESHOLD_DEFAULT</a>, uint8_t releaseThreshold=<a class="el" href="_adafruit___m_p_r121_8h.html#af51b589d3c7f29cc43fff6f96715a0e9">MPR121_RELEASE_THRESHOLD_DEFAULT</a>, boolean autoconfig=false)</td></tr>
+<tr class="memdesc:a0f961c9913525f3d8b214127cbdb3339"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin an MPR121 object on a given I2C bus. This function resets the device and writes the default settings.  <a href="#a0f961c9913525f3d8b214127cbdb3339">More...</a><br /></td></tr>
+<tr class="separator:a0f961c9913525f3d8b214127cbdb3339"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#aa5bda4ff04ee361d857b80d95bddbbdb">filteredData</a> (uint8_t t)</td></tr>
 <tr class="memdesc:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the filtered data from channel t. The ADC raw data outputs run through 3 levels of digital filtering to filter out the high frequency and low frequency noise encountered. For detailed information on this filtering see page 6 of the device datasheet.  <a href="#aa5bda4ff04ee361d857b80d95bddbbdb">More...</a><br /></td></tr>
 <tr class="separator:aa5bda4ff04ee361d857b80d95bddbbdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a663d5e60aeb04b06697b2c40a33b40f0"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a663d5e60aeb04b06697b2c40a33b40f0">baselineData</a> (uint8_t t)</td></tr>
 <tr class="memdesc:a663d5e60aeb04b06697b2c40a33b40f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the baseline value for the channel. The 3rd level filtered result is internally 10bit but only high 8 bits are readable from registers 0x1E~0x2A as the baseline value output for each channel.  <a href="#a663d5e60aeb04b06697b2c40a33b40f0">More...</a><br /></td></tr>
 <tr class="separator:a663d5e60aeb04b06697b2c40a33b40f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66adfa0474632af6bcd0dbb0d5d94801"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a66adfa0474632af6bcd0dbb0d5d94801">setAutoconfig</a> (boolean autoconfig)</td></tr>
+<tr class="memdesc:a66adfa0474632af6bcd0dbb0d5d94801"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable autoconfig option.  <a href="#a66adfa0474632af6bcd0dbb0d5d94801">More...</a><br /></td></tr>
+<tr class="separator:a66adfa0474632af6bcd0dbb0d5d94801"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a344c416d709121094a21d6892e23d28e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___m_p_r121.html#a344c416d709121094a21d6892e23d28e">readRegister8</a> (uint8_t reg)</td></tr>
 <tr class="memdesc:a344c416d709121094a21d6892e23d28e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the contents of an 8 bit device register.  <a href="#a344c416d709121094a21d6892e23d28e">More...</a><br /></td></tr>
 <tr class="separator:a344c416d709121094a21d6892e23d28e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -108,8 +111,8 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that stores state and functions for interacting with MPR121 proximity capacitive touch sensor controller. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac62a47c152877a4fd9ee08dd6fbfc8e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac62a47c152877a4fd9ee08dd6fbfc8e6">&#9670;&nbsp;</a></span>begin()</h2>
+<a id="a0f961c9913525f3d8b214127cbdb3339"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f961c9913525f3d8b214127cbdb3339">&#9670;&nbsp;</a></span>begin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -136,7 +139,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>releaseThreshold</em> = <code><a class="el" href="_adafruit___m_p_r121_8h.html#af51b589d3c7f29cc43fff6f96715a0e9">MPR121_RELEASE_THRESHOLD_DEFAULT</a></code>&#160;</td>
+          <td class="paramname"><em>releaseThreshold</em> = <code><a class="el" href="_adafruit___m_p_r121_8h.html#af51b589d3c7f29cc43fff6f96715a0e9">MPR121_RELEASE_THRESHOLD_DEFAULT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>autoconfig</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,6 +162,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">*theWire</td><td>Wire object </td></tr>
     <tr><td class="paramname">touchThreshold</td><td>touch detection threshold value </td></tr>
     <tr><td class="paramname">releaseThreshold</td><td>release detection threshold value </td></tr>
+    <tr><td class="paramname">autoconfig</td><td>enable autoconfig option </td></tr>
   </table>
   </dd>
 </dl>
@@ -211,6 +221,32 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the baseline data that was read </dd></dl>
+
+</div>
+</div>
+<a id="a66adfa0474632af6bcd0dbb0d5d94801"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66adfa0474632af6bcd0dbb0d5d94801">&#9670;&nbsp;</a></span>setAutoconfig()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_MPR121::setAutoconfig </td>
+          <td>(</td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>autoconfig</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable autoconfig option. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">autoconfig</td><td>enable / disabled autoconfig when enabled, the MPR121 automatically searches and sets the charging parameters for every enabled pad. this happens on each time the MPR121 transitions from Stop Mode to Run Mode. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
