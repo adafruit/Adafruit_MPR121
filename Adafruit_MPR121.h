@@ -88,10 +88,13 @@ public:
 
   bool begin(uint8_t i2caddr = MPR121_I2CADDR_DEFAULT, TwoWire *theWire = &Wire,
              uint8_t touchThreshold = MPR121_TOUCH_THRESHOLD_DEFAULT,
-             uint8_t releaseThreshold = MPR121_RELEASE_THRESHOLD_DEFAULT);
+             uint8_t releaseThreshold = MPR121_RELEASE_THRESHOLD_DEFAULT,
+             boolean autoconfig = false);
 
   uint16_t filteredData(uint8_t t);
   uint16_t baselineData(uint8_t t);
+
+  void setAutoconfig(boolean autoconfig);
 
   uint8_t readRegister8(uint8_t reg);
   uint16_t readRegister16(uint8_t reg);
