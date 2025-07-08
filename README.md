@@ -1,7 +1,7 @@
 # Adafruit MPR121 Library [![Build Status](https://github.com/adafruit/Adafruit_MPR121/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_MPR121/actions)
 
 
-<a href="https://www.adafruit.com/products/1982"><img src="https://cdn-shop.adafruit.com/970x728/1982-04.jpg" height="300"/></a>
+<a href="https://www.adafruit.com/products/1982"><img src="https://cdn-shop.adafruit.com/640x480/1982-08.jpg" height="300"/></a>
 
 Tested and works great with the Adafruit MPR121
   * https://www.adafruit.com/products/1982
